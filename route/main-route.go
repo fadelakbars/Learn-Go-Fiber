@@ -7,5 +7,6 @@ import (
 )
 
 func RouteInit(route *fiber.App)  {
-	route.Get("/alluser", handler.UserFindAll)
+	route.Get("/user", handler.UserFindAll)
+	route.Post("/user", handler.UserCreate)
 }

@@ -10,5 +10,4 @@ type User struct {
 	Phone    string `json:"phone" gorm:"not null"`
 	CreatedAt    time.Time     `json:"created_at"`
 	UpdatedAt    time.Time     `json:"updated_at"`
-	DekletedAt   time.Time    `json:"deleted_at" gorm:"index"`
 }
