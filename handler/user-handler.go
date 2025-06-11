@@ -1,9 +1,21 @@
 package handler
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"go-fiber/database"
+	"go-fiber/model/entity"
+	"log"
 
-func ReadUser(ctx *fiber.Ctx) error {
-	return ctx.JSON(fiber.Map{
-		"user": "user satu",
-	})
+	"github.com/gofiber/fiber/v2"
+)
+
+func UserFindAll(ctx *fiber.Ctx) error {
+
+	var users []entity.User
+
+	result := database.DB.Find(&users)
+	if result.Error != nil {
+		log.Println(result.Error)
+	}
+
+	return ctx.JSON(users)
 }
