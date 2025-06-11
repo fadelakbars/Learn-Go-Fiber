@@ -73,17 +73,72 @@ func UserFindById(ctx *fiber.Ctx) error {
 	}
 
 	userResponse := response.UserResponse{
-	ID:       user.ID,
-	Name:     user.Name,
-	Email:    user.Email,
-	Address:  user.Address,
-	Phone:    user.Phone,
-	CreatedAt: user.CreatedAt,
-	UpdatedAt: user.UpdatedAt,
+		ID:       user.ID,
+		Name:     user.Name,
+		Email:    user.Email,
+		Address:  user.Address,
+		Phone:    user.Phone,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}
 
 	return ctx.Status(200).JSON(fiber.Map{
 		"message": "success",
 		"data":    userResponse,
+	})
+}
+
+func UserUpdate(ctx *fiber.Ctx) error {
+	userRequest := new(request.UserUpdateRequest)
+
+	if err := ctx.BodyParser(userRequest); err != nil {
+		return ctx.Status(400).JSON(fiber.Map{
+			"message":   "Bad request",
+		})
+	}
+
+	userId := ctx.Params("id")
+
+	var user entity.User
+
+	err := database.DB.First(&user, "id = ?", userId).Error
+
+	if err != nil {
+		return ctx.Status(404).JSON(fiber.Map{
+			"error":   "User not found",
+		})
+	}
+
+	// UPDATE USER
+	if userRequest.Name != "" {
+		user.Name = userRequest.Name
+	}
+	if userRequest.Address != "" {
+		user.Address = userRequest.Address
+	}
+	if userRequest.Phone != "" {
+		user.Phone = userRequest.Phone
+	}
+
+	errUpdateUser := database.DB.Save(&user).Error
+	if errUpdateUser != nil {
+		return ctx.Status(500).JSON(fiber.Map{
+			"message": "Gagal memperbarui user",
+		})
+	}
+
+	userUpdateResponse := response.UserResponse{
+		ID:       user.ID,
+		Name:     user.Name,
+		Email:    user.Email,
+		Address:  user.Address,
+		Phone:    user.Phone,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+
+	return ctx.Status(200).JSON(fiber.Map{
+		"message": "success",
+		"data":    userUpdateResponse,
 	})
 }
