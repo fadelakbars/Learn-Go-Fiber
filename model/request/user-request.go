@@ -5,8 +5,8 @@ import (
 )
 
 type UserRequest struct {
-	Name     string `json:"name" gorm:"not null"`
-	Email    string `json:"email" gorm:"unique;not null"`
-	Address  string `json:"address" gorm:"not null"`			
-	Phone    string `json:"phone" gorm:"not null"`
+	Name     string `json:"name" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+	Address  string `json:"address" validate:"required"`
+	Phone    string `json:"phone" validate:"required"`
 }

@@ -6,6 +6,7 @@ import (
 	"go-fiber/model/request"
 	"log"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -25,6 +26,16 @@ func UserCreate(ctx *fiber.Ctx) error {
 	if err := ctx.BodyParser(user); err != nil {
 		return err
 	}
+
+	validate := validator.New()
+	errValidate := validate.Struct(user) 
+	if errValidate != nil {
+		return ctx.Status(400).JSON(fiber.Map{
+			"status": "Gagal memparsing body request",
+			"error" : errValidate.Error(),
+		})
+	}
+
 
 	newUsr := entity.User{
 		Name:  user.Name,
