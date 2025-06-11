@@ -3,6 +3,7 @@ package handler
 import (
 	"go-fiber/database"
 	"go-fiber/model/entity"
+	"go-fiber/model/response"
 	"go-fiber/model/request"
 	"log"
 
@@ -36,7 +37,6 @@ func UserCreate(ctx *fiber.Ctx) error {
 		})
 	}
 
-
 	newUsr := entity.User{
 		Name:  user.Name,
 		Email: user.Email,
@@ -58,4 +58,32 @@ func UserCreate(ctx *fiber.Ctx) error {
 		"data":    newUsr,
 	})
 
+}
+
+func UserFindById(ctx *fiber.Ctx) error {
+	userId := ctx.Params("id")
+	var user entity.User
+
+	err := database.DB.First(&user, "id = ?", userId).Error
+
+	if err != nil {
+		return ctx.Status(404).JSON(fiber.Map{
+			"error":   "User not found",
+		})
+	}
+
+	userResponse := response.UserResponse{
+	ID:       user.ID,
+	Name:     user.Name,
+	Email:    user.Email,
+	Address:  user.Address,
+	Phone:    user.Phone,
+	CreatedAt: user.CreatedAt,
+	UpdatedAt: user.UpdatedAt,
+	}
+
+	return ctx.Status(200).JSON(fiber.Map{
+		"message": "success",
+		"data":    userResponse,
+	})
 }
